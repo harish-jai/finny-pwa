@@ -5,9 +5,13 @@ import ExpenseForm from './ExpenseForm'
 import ExpensesTable from './ExpensesTable'
 import type { Expense } from '../../lib/types'
 
-function ulid() {
-    // tiny ULID-ish; use a proper lib if you like
-    return Math.random().toString(36).slice(2) + Date.now().toString(36)
+function generateId() {
+    // Generate a proper UUID v4
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        const r = Math.random() * 16 | 0
+        const v = c === 'x' ? r : (r & 0x3 | 0x8)
+        return v.toString(16)
+    })
 }
 
 export default function ExpensesPage() {
@@ -16,17 +20,19 @@ export default function ExpensesPage() {
     const [editing, setEditing] = useState<Expense | null>(null)
     const [adding, setAdding] = useState(false)
 
-    if (isLoading) return <div className="panel">Loading…</div>
-    if (error) return <div className="panel" style={{ color: 'var(--danger)' }}>{String(error)}</div>
+    if (isLoading) return <div className="loading">Loading transactions…</div>
+    if (error) return <div className="error">Error loading transactions: {String(error)}</div>
     if (!user) return <div className="panel">Please sign in to view expenses.</div>
 
     const rows = data ?? []
 
     return (
         <div className="grid">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h2>Transactions</h2>
-                <button onClick={() => { setAdding(true); setEditing(null) }}>Add</button>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+                <h2 style={{ margin: 0, fontSize: '24px', fontWeight: '700', color: 'var(--text)' }}>💰 Transactions</h2>
+                <button onClick={() => { setAdding(true); setEditing(null) }} style={{ minHeight: '44px' }}>
+                    ➕ Add Transaction
+                </button>
             </div>
 
             {adding && (
@@ -34,7 +40,7 @@ export default function ExpensesPage() {
                     onSubmit={(v) => {
                         const tags = v.tags ? v.tags.split(',').map(s => s.trim()).filter(Boolean) : []
                         create.mutate({
-                            id: ulid(),
+                            id: generateId(),
                             user_id: user.id,
                             date: v.date,
                             amount: v.amount,

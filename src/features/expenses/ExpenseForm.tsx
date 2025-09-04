@@ -76,27 +76,30 @@ export default function ExpenseForm({
 
     return (
         <form className="panel" onSubmit={handleSubmit(onValid)}>
+            <h3 style={{ margin: '0 0 20px 0', color: 'var(--text)', fontSize: '20px' }}>
+                {initial ? '✏️ Edit Transaction' : '➕ Add New Transaction'}
+            </h3>
             <div className="grid grid-2">
                 <div>
-                    <label>Date</label>
+                    <label>📅 Date</label>
                     <input type="date" {...register('date')} />
                 </div>
                 <div>
-                    <label>Amount</label>
-                    <input type="number" step="0.01" {...register('amount')} />
+                    <label>💰 Amount</label>
+                    <input type="number" step="0.01" placeholder="0.00" {...register('amount')} />
                 </div>
             </div>
 
-            <label>Store</label>
-            <input {...register('store')} />
+            <label>🏪 Store</label>
+            <input placeholder="e.g., Target, Amazon, Local Market" {...register('store')} />
 
-            <label>Description</label>
-            <input {...register('description')} />
+            <label>📝 Description</label>
+            <input placeholder="What did you buy?" {...register('description')} />
 
             <div className="grid grid-2">
                 <div>
-                    <label>Category</label>
-                    <select {...register('category')} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: '#0f172a', color: 'var(--text)' }}>
+                    <label>📂 Category</label>
+                    <select {...register('category')}>
                         <option value="">Select a category</option>
                         {categoryOptions.map((group) => (
                             <optgroup key={group.group} label={group.group}>
@@ -110,8 +113,8 @@ export default function ExpenseForm({
                     </select>
                 </div>
                 <div>
-                    <label>Payment Method</label>
-                    <select {...register('payment_method')} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: '#0f172a', color: 'var(--text)' }}>
+                    <label>💳 Payment Method</label>
+                    <select {...register('payment_method')}>
                         <option value="">Select payment method</option>
                         {paymentMethodOptions.map((method) => (
                             <option key={method} value={method}>
@@ -122,33 +125,36 @@ export default function ExpenseForm({
                 </div>
             </div>
 
-            <label>Tags (comma separated)</label>
-            <input placeholder="groceries, essentials" {...register('tags')} />
+            <label>🏷️ Tags (comma separated)</label>
+            <input placeholder="groceries, essentials, work" {...register('tags')} />
 
             <div className="grid grid-2">
                 <div>
-                    <label>Gift (who for)</label>
+                    <label>🎁 Gift (who for)</label>
                     <input placeholder="Mom / Friend / (empty)" {...register('gift')} />
                 </div>
                 <div>
-                    <label>Girlfriend %</label>
-                    <input type="number" min={0} max={100} {...register('girlfriendPct')} />
+                    <label>👫 GF %</label>
+                    <input type="number" min={0} max={100} placeholder="0" {...register('girlfriendPct')} />
                 </div>
             </div>
 
-            <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-                <button type="submit">Save</button>
+            <div style={{ display: 'flex', gap: 12, marginTop: 24, flexWrap: 'wrap' }}>
+                <button type="submit" style={{ minHeight: '44px', flex: '1', minWidth: '120px' }}>
+                    💾 Save Transaction
+                </button>
                 {onCancel && (
-                    <button type="button" className="ghost" onClick={onCancel}>
-                        Cancel
+                    <button type="button" className="ghost" onClick={onCancel} style={{ minHeight: '44px', flex: '1', minWidth: '120px' }}>
+                        ❌ Cancel
                     </button>
                 )}
             </div>
 
             {Object.keys(errors).length > 0 && (
-                <div style={{ color: 'var(--danger)', marginTop: 8 }}>
-                    {Object.entries(errors).map(([k]) => (
-                        <div key={k}>{k} is invalid</div>
+                <div className="error" style={{ marginTop: 16 }}>
+                    <strong>Please fix the following errors:</strong>
+                    {Object.entries(errors).map(([k, v]) => (
+                        <div key={k}>• {k}: {v?.message || 'is invalid'}</div>
                     ))}
                 </div>
             )}
