@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useExpenses } from './useExpenses'
+import { useAuth } from '../../contexts/AuthContext'
 import ExpenseForm from './ExpenseForm'
 import ExpensesTable from './ExpensesTable'
 import type { Expense } from '../../lib/types'
-import { supabase } from '../../lib/supabase'
 
 function ulid() {
     // tiny ULID-ish; use a proper lib if you like
@@ -12,16 +12,13 @@ function ulid() {
 
 export default function ExpensesPage() {
     const { data, isLoading, error, create, update, remove } = useExpenses()
+    const { user } = useAuth()
     const [editing, setEditing] = useState<Expense | null>(null)
     const [adding, setAdding] = useState(false)
 
-    const [userId, setUserId] = useState<string | null>(null)
-    useEffect(() => {
-        supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null))
-    }, [])
-
     if (isLoading) return <div className="panel">Loading…</div>
     if (error) return <div className="panel" style={{ color: 'var(--danger)' }}>{String(error)}</div>
+    if (!user) return <div className="panel">Please sign in to view expenses.</div>
 
     const rows = data ?? []
 
@@ -32,13 +29,13 @@ export default function ExpensesPage() {
                 <button onClick={() => { setAdding(true); setEditing(null) }}>Add</button>
             </div>
 
-            {adding && userId && (
+            {adding && (
                 <ExpenseForm
                     onSubmit={(v) => {
                         const tags = v.tags ? v.tags.split(',').map(s => s.trim()).filter(Boolean) : []
                         create.mutate({
                             id: ulid(),
-                            user_id: userId,
+                            user_id: user.id,
                             date: v.date,
                             amount: v.amount,
                             description: v.description,

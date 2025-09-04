@@ -1,4 +1,5 @@
 import { useExpenses } from '../expenses/useExpenses'
+import { useAuth } from '../../contexts/AuthContext'
 import { thisMonthRange, within, ym } from '../../lib/date'
 import { useMemo } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie } from 'recharts'
@@ -7,6 +8,9 @@ function sum(arr: number[]) { return arr.reduce((a, b) => a + b, 0) }
 
 export default function InsightsPage() {
     const { data = [] } = useExpenses()
+    const { user } = useAuth()
+
+    if (!user) return <div className="panel">Please sign in to view insights.</div>
 
     const { start, end } = thisMonthRange()
     const monthRows = useMemo(() => data.filter(e => within(e.date, start, end)), [data, start, end])
