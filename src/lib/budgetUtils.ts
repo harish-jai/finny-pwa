@@ -1,4 +1,4 @@
-import { parseISO, startOfMonth, endOfMonth, differenceInDays, format } from 'date-fns'
+import { parseISO, startOfMonth, endOfMonth, differenceInDays } from 'date-fns'
 
 export interface DailyBudgetInfo {
     dailyBudget: number
@@ -83,7 +83,7 @@ export function calculateDailyBudget(
 }
 
 export function formatBudgetStatus(budgetInfo: DailyBudgetInfo): string {
-    const { availableToday, spentToday, dailyBudget, rolloverAmount, isOverBudget } = budgetInfo
+    const { availableToday, rolloverAmount, isOverBudget } = budgetInfo
 
     if (isOverBudget) {
         return `Over budget by $${Math.abs(availableToday).toFixed(2)} today`
@@ -97,7 +97,7 @@ export function formatBudgetStatus(budgetInfo: DailyBudgetInfo): string {
 }
 
 export function getBudgetStatusColor(budgetInfo: DailyBudgetInfo): string {
-    const { availableToday, isOverBudget, budgetUtilization } = budgetInfo
+    const { isOverBudget, budgetUtilization } = budgetInfo
 
     if (isOverBudget) return 'var(--error)'
     if (budgetUtilization > 90) return 'var(--warning)'

@@ -43,18 +43,8 @@ export function calculateUtilization(card: CreditCard): CreditCardUtilization {
 }
 
 export function calculateCurrentBalanceFromExpenses(
-    card: CreditCard,
-    expenses: Expense[]
+    card: CreditCard
 ): number {
-    // Calculate current balance from expenses for this payment method
-    const cardExpenses = expenses.filter(expense =>
-        expense.payment_method === card.payment_method
-    )
-
-    // Sum up all expenses (charges are typically negative amounts)
-    // We want the absolute value to get the total amount charged
-    const totalCharges = Math.abs(cardExpenses.reduce((sum, expense) => sum + expense.amount, 0))
-
     // For now, return the manually set balance from the card
     // In a real app, you'd want to track payments and calculate net balance
     return card.current_balance
