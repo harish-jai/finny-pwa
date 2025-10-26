@@ -3,6 +3,7 @@ import { useExpenses } from './useExpenses'
 import { useAuth } from '../../contexts/AuthContext'
 import ExpenseForm from './ExpenseForm'
 import ExpensesTable from './ExpensesTable'
+import BudgetBanner from '../../components/BudgetBanner'
 import type { Expense } from '../../lib/types'
 
 function generateId() {
@@ -34,6 +35,8 @@ export default function ExpensesPage() {
                     ➕ Add Transaction
                 </button>
             </div>
+
+            <BudgetBanner />
 
             {adding && (
                 <ExpenseForm

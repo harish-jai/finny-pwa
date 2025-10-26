@@ -2,6 +2,9 @@ import { useForm, type Resolver, type SubmitHandler } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Expense } from '../../lib/types'
+import { useCreditCards } from '../credit-cards/useCreditCards'
+import { useExpenses } from './useExpenses'
+import { getPaymentMethodsFromExpenses } from '../../lib/creditCardUtils'
 
 const schema = z.object({
     date: z.string().min(1),
@@ -31,13 +34,13 @@ const categoryOptions = [
     { group: 'Uncategorized', options: ['Uncategorized'] },
 ]
 
-// Payment method options
-const paymentMethodOptions = [
-    'Bank of America Customized Cash Rewards',
-    'Chase Debit Card',
+// Base payment method options (always available)
+const basePaymentMethodOptions = [
     'Cash',
-    'Gift Card',
     'Check',
+    'Bank Transfer',
+    'Gift Card',
+    'Other',
 ]
 
 export default function ExpenseForm({
@@ -49,6 +52,21 @@ export default function ExpenseForm({
     onSubmit: (values: FormValues) => void
     onCancel?: () => void
 }) {
+    const { data: creditCards = [] } = useCreditCards()
+    const { data: expenses = [] } = useExpenses()
+
+    // Get dynamic payment methods from credit cards and existing expenses
+    const existingPaymentMethods = getPaymentMethodsFromExpenses(expenses)
+    const creditCardPaymentMethods = creditCards
+        .filter(card => card.is_active)
+        .map(card => card.payment_method)
+
+    // Combine all payment methods and remove duplicates
+    const allPaymentMethods = Array.from(new Set([
+        ...basePaymentMethodOptions,
+        ...existingPaymentMethods,
+        ...creditCardPaymentMethods
+    ])).sort()
     const {
         register,
         handleSubmit,
@@ -116,11 +134,14 @@ export default function ExpenseForm({
                     <label>💳 Payment Method</label>
                     <select {...register('payment_method')}>
                         <option value="">Select payment method</option>
-                        {paymentMethodOptions.map((method) => (
-                            <option key={method} value={method}>
-                                {method}
-                            </option>
-                        ))}
+                        {allPaymentMethods.map((method) => {
+                            const isCreditCard = creditCardPaymentMethods.includes(method)
+                            return (
+                                <option key={method} value={method}>
+                                    {isCreditCard ? '💳 ' : ''}{method}
+                                </option>
+                            )
+                        })}
                     </select>
                 </div>
             </div>

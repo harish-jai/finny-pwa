@@ -38,6 +38,12 @@ export default function App() {
             <Link to="/insights" className="ghost" style={{ padding: '8px 16px', borderRadius: '8px', textDecoration: 'none', display: 'flex', alignItems: 'center', minHeight: '44px' }}>
               📊 Insights
             </Link>
+            <Link to="/budgets" className="ghost" style={{ padding: '8px 16px', borderRadius: '8px', textDecoration: 'none', display: 'flex', alignItems: 'center', minHeight: '44px' }}>
+              🎯 Budgets
+            </Link>
+            <Link to="/credit-cards" className="ghost" style={{ padding: '8px 16px', borderRadius: '8px', textDecoration: 'none', display: 'flex', alignItems: 'center', minHeight: '44px' }}>
+              💳 Credit Cards
+            </Link>
           </div>
           <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
             <small style={{ color: 'var(--muted)', fontSize: '12px' }}>{pathname}</small>
